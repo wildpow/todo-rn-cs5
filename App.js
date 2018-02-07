@@ -22,14 +22,23 @@ export default class App extends React.Component {
       let { text, todos } = prevState;
       return {
         text: '',
-        todos: [...todos, { key: text + todos.length, text /* completed */ }]
+        todos: [...todos, { key: text + todos.length, text, completed: false }]
       };
     });
-    console.log(this.state.todos);
   };
 
   handleTextChange = text => {
     this.setState({ text });
+  };
+
+  handleCompletedToggle = todoKey => {
+    const todos = this.state.todos.slice();
+    todos.map(todo => {
+      if (todo.key === todoKey) {
+        return (todo.completed = !todo.completed);
+      }
+    });
+    this.setState({ todos });
   };
 
   render() {
@@ -51,7 +60,10 @@ export default class App extends React.Component {
           renderItem={({ item, key }) => {
             return (
               <View key={item.key}>
-                <Text style={/* fill this in with a dynamic style*/ null}>
+                <Text
+                  onPress={() => this.handleCompletedToggle(item.key)}
+                  style={item.completed ? styles.lineThrough : null}
+                >
                   {item.text}
                 </Text>
               </View>
@@ -64,6 +76,9 @@ export default class App extends React.Component {
 }
 
 const styles = StyleSheet.create({
+  lineThrough: {
+    textDecorationLine: 'line-through'
+  },
   container: {
     flex: 1,
     backgroundColor: '#fff',
